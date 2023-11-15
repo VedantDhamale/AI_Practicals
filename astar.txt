@@ -1,0 +1,91 @@
+class node:
+    def __init__(self,data,level,fval):
+        self.data=data
+        self.fval=fval
+        self.level=level
+class puzzle:
+    def __init__(self,size):
+        self.size=size
+
+    def fvalue(self,start,goal):
+        return self.hvalue(start.data,goal)+start.level
+    
+    def hvalue(self,start,goal):
+        temp=0
+        for i in range(self.size):
+            for j in range(self.size):
+                if(start[i][j]==goal[i][j]):
+                    temp=temp+1
+        return temp
+    
+    def find(self,matrix,item):
+        for i in range(self.size):
+            for j in range(self.size):
+                if(matrix[i][j]==item):
+                    return i,j
+    
+    def generate_child(self,Node):
+        x,y=self.find(Node.data,'_')
+        moves=[[x,y-1],[x,y+1],[x-1,y],[x+1,y]]
+        children=[]
+        for i in moves:
+            child=self.shuffle(Node.data,x,y,i[0],i[1])
+            if child is not None:
+                child_node=node(child,0,0)
+                children.append(child_node)
+        return children
+    
+    def shuffle(self,matrix,x1,y1,x2,y2):
+        if(x2>=0 and x2<self.size and y2>=0 and y2<self.size):
+            new=[]
+            for i in matrix:
+                entry=[]
+                for j in i:
+                    entry.append(j)
+                new.append(entry)
+            (new[x1][y1],new[x2][y2])=(new[x2][y2],new[x1][y1])
+            return new
+        else:
+            return None
+
+    def process(self):
+        open=[]
+        closed=[]
+        initial=[]
+        goal=[]
+
+        print("Enter Intial state : ")
+        for i in range(self.size):
+            entry=input().split()
+            initial.append(entry)
+
+        print("Enter Goal state : ")
+        for i in range(self.size):
+            entry=input().split()
+            goal.append(entry)
+
+        start=node(initial,0,0)
+        start.fval=self.fvalue(start,goal)
+        open.append(start)
+
+        while(True):
+            current=open[0]
+            for i in range(self.size):
+                for j in range(self.size):
+                    print(current.data[i][j],end=" ")
+                print("")
+            print("\n")
+            if(current.data==goal):
+                break
+            for i in self.generate_child(current):
+                i.fval=self.fvalue(i,goal)
+                open.append(i)
+            closed.append(current)
+            del open[0]
+            for i in range(len(open)):
+                for j in range(len(open)):
+                    if(self.fvalue(open[i],goal)>self.fvalue(open[j],goal)):
+                        (open[i],open[j])=(open[j],open[i])
+
+p=puzzle(3)
+p.process()
