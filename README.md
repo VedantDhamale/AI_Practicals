@@ -1,1 +1,1 @@
-SPPU 3rd year AI & DS Practicals of subject AI
+SPPU 3rd year AI & DS Practicals, AI Subject
